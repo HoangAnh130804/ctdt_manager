@@ -1,5 +1,5 @@
 const DEMO_MODE = false;
-const API_BASE_URL = "https://ctdt-manager-backend.onrender.com";
+const API_BASE_URL = "https://ctdt-manager-backend.onrender.com/api";
 
 class UniversityApp {
     constructor() {
