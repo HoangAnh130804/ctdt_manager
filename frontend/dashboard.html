@@ -161,28 +161,50 @@
     
     <script>
         // Global variables
+        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
         let currentUser = null;
-        let currentPage = 'dashboard';
         
         // Initialize
         $(document).ready(function() {
             checkAuth();
-            setupEventListeners();
+            //setupEventListeners();
         });
         
         function checkAuth() {
             const token = localStorage.getItem('token');
-            const userData = localStorage.getItem('user');
-            
-            if (!token || !userData) {
+            const user = localStorage.getItem('user');
+
+            if (!token || !user) {
                 window.location.href = 'index.html';
                 return;
             }
             
-            currentUser = JSON.parse(userData);
-            updateUserInfo();
+            currentUser = JSON.parse(user);
             showDashboard();
         }
+        
+        async function apiRequest(endpoint, options = {}) {
+        const token = localStorage.getItem('token');
+            
+            try {
+                const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { Authorization: `Bearer ${token}` })
+                    }
+                });
+                
+                if (!res.ok) throw new Error('Server error');
+
+                return await res.json();
+            } catch (err) {
+                console.error(err);
+                showToast('Lỗi kết nối server', 'error');
+                return null;
+            }
+        }
+    }
         
         function updateUserInfo() {
             $('#userName').text(currentUser.full_name || currentUser.username);
@@ -210,7 +232,8 @@
         }
         
         // API Helper
-        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
+        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api'';
+        
         async function apiRequest(endpoint, options = {}) {
             const url = `${API_BASE_URL}${endpoint}`;
             const token = localStorage.getItem('token');
@@ -222,20 +245,18 @@
             };
             
             try {
-                const response = await fetch(url, { ...options, headers });
+                const response = await fetch(url, { 
+                    ...options, 
+                    headers 
+                });
                 
                 if (response.status === 401) {
                     // Token expired
                     localStorage.clear();
-                    window.location.href = '/';
+                    window.location.href = 'index.html';
                     return null;
                 }
-                
-                if (response.headers.get('content-type')?.includes('application/vnd.openxmlformats')) {
-                    // This is an Excel file
-                    return response.blob();
-                }
-                
+                                
                 return await response.json();
             } catch (error) {
                 console.error('API Error:', error);
@@ -2980,5 +3001,6 @@ $(document).ready(function() {
 </body>
 
 </html>
+
 
 
