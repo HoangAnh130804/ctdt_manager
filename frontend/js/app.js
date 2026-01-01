@@ -1,4 +1,4 @@
-const DEMO_MODE = false;
+const DEMO_MODE = true;
 const API_BASE_URL = "https://ctdt-manager-backend.onrender.com";
 
 // Main App
@@ -147,7 +147,7 @@ class UniversityApp {
 
     // 👉 REAL API (sau này dùng)
     try {
-        const result = await this.makeRequest('Api/Auth/login', {
+        const result = await this.makeRequest('/api/auth/login', {
             method: 'POST',
             body: JSON.stringify({ username, password })
         });
@@ -272,7 +272,7 @@ class UniversityApp {
 
     async showCourses() {
         try {
-            const result = await this.makeRequest('/courses');
+            const result = await this.makeRequest('/api/courses');
             
             let coursesHTML = '';
             if (result.success && result.data && result.data.length > 0) {
@@ -378,7 +378,7 @@ class UniversityApp {
             };
 
             try {
-                const result = await this.makeRequest('/courses', {
+                const result = await this.makeRequest('/api/courses', {
                     method: 'POST',
                     body: JSON.stringify(courseData)
                 });
