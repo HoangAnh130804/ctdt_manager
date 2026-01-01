@@ -210,8 +210,9 @@
         }
         
         // API Helper
+        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
         async function apiRequest(endpoint, options = {}) {
-            const url = `http://localhost:5000/api${endpoint}`;
+            const url = `${API_BASE_URL}${endpoint}`;
             const token = localStorage.getItem('token');
             
             const headers = {
@@ -481,7 +482,7 @@
         processing: true,
         serverSide: false,
         ajax: {
-            url: 'http://localhost:5000/api/courses',
+            url: 'https://ctdt-manager-backend.onrender.com/api/courses',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -1015,7 +1016,7 @@ async function exportCoursesExcel() {
             return;
         }
         
-        const url = 'http://localhost:5000/api/courses/export/excel';
+        const url = 'https://ctdt-manager-backend.onrender.com/api/courses/export/excel';
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
         
@@ -1138,7 +1139,7 @@ async function exportCourseSubjectsExcel(courseId) {
         console.log('🔵 [FRONTEND] Exporting subjects for course:', courseId);
         
         const token = localStorage.getItem('token');
-        const url = `http://localhost:5000/api/subjects/course/${courseId}/export/excel`;
+        const url = `/subjects/course/${courseId}/export/excel`;
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
         
@@ -1406,7 +1407,7 @@ function initializeSubjectsTable() {
         processing: true,
         serverSide: false,
         ajax: {
-            url: 'http://localhost:5000/api/subjects',
+            url: '/subjects',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -1866,7 +1867,7 @@ function searchSubjects() {
     const subjectType = $('#filterSubjectType').val();
     const courseId = $('#filterSubjectCourse').val();
     
-    let url = 'http://localhost:5000/api/subjects';
+    let url = 'https://ctdt-manager-backend.onrender.com/api/subjects';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -1891,7 +1892,7 @@ function resetSubjectSearch() {
     
     if ($.fn.DataTable.isDataTable('#subjectsTable')) {
         const table = $('#subjectsTable').DataTable();
-        table.ajax.url('http://localhost:5000/api/subjects').load();
+        table.ajax.url('https://ctdt-manager-backend.onrender.com/api/subjects').load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -1899,7 +1900,7 @@ function resetSubjectSearch() {
 
 async function exportSubjectsExcel() {
     try {
-        const response = await fetch('http://localhost:5000/api/subjects/export/excel', {
+        const response = await fetch('https://ctdt-manager-backend.onrender.com/api/subjects/export/excel', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -1940,7 +1941,7 @@ function searchCourses() {
     const searchText = $('#searchCourse').val();
     const educationSystem = $('#filterCourseEducationSystem').val();
     
-    let url = 'http://localhost:5000/api/courses';
+    let url = 'https://ctdt-manager-backend.onrender.com/api/courses';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -1963,7 +1964,7 @@ function resetCourseSearch() {
     
     if ($.fn.DataTable.isDataTable('#coursesTable')) {
         const table = $('#coursesTable').DataTable();
-        table.ajax.url('http://localhost:5000/api/courses').load();
+        table.ajax.url('https://ctdt-manager-backend.onrender.com/api/courses').load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -1976,7 +1977,7 @@ function searchPrograms() {
     const status = $('#filterProgramStatus').val();
     const courseId = $('#filterProgramCourse').val();
     
-    let url = 'http://localhost:5000/api/programs';
+    let url = 'https://ctdt-manager-backend.onrender.com/api/programs';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2134,7 +2135,7 @@ $(document).ready(function() {
                 processing: true,
                 serverSide: false,
                 ajax: {
-                    url: 'http://localhost:5000/api/programs',
+                    url: 'https://ctdt-manager-backend.onrender.com/api/programs',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
@@ -2747,7 +2748,7 @@ async function showEditProgramForm(id) {
         document.title = 'Đang xuất Excel...';
         
         // Tạo URL đầy đủ
-        const url = 'http://localhost:5000/api/programs/export/excel';
+        const url = 'https://ctdt-manager-backend.onrender.com/api/programs/export/excel';
         const token = localStorage.getItem('token');
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
@@ -2818,7 +2819,7 @@ function fallbackExportProgramsExcel() {
     console.log('🔄 [FRONTEND] Trying fallback export...');
     
     const token = localStorage.getItem('token');
-    const url = `http://localhost:5000/api/programs/export/excel?token=${encodeURIComponent(token)}`;
+    const url = `https://ctdt-manager-backend.onrender.com/api/programs/export/excel?token=${encodeURIComponent(token)}`;
     
     // Mở trong tab mới
     const newWindow = window.open(url, '_blank');
@@ -2838,7 +2839,7 @@ function searchCourses() {
     const searchText = $('#searchCourse').val();
     const educationSystem = $('#filterCourseEducationSystem').val();
     
-    let url = 'http://localhost:5000/api/courses';
+    let url = 'https://ctdt-manager-backend.onrender.com/api/courses';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2862,7 +2863,7 @@ function resetCourseSearch() {
     
     if ($.fn.DataTable.isDataTable('#coursesTable')) {
         const table = $('#coursesTable').DataTable();
-        table.ajax.url('http://localhost:5000/api/courses').load();
+        table.ajax.url('https://ctdt-manager-backend.onrender.com/api/courses').load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -2873,7 +2874,7 @@ function searchPrograms() {
     const status = $('#filterProgramStatus').val();
     const courseId = $('#filterProgramCourse').val();
     
-    let url = 'http://localhost:5000/api/programs';
+    let url = 'https://ctdt-manager-backend.onrender.com/api/programs';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2979,3 +2980,4 @@ $(document).ready(function() {
 </body>
 
 </html>
+
