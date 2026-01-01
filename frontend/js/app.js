@@ -1,6 +1,5 @@
-// App Configuration
-const DEMO_MODE = false;
 const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
+
 
 // Main App
 class UniversityApp {
@@ -245,6 +244,7 @@ class UniversityApp {
     async loadDashboardData() {
         try {
             const result = await this.makeRequest('/dashboard');
+            console.log('Dashboard data:', result);
             
             if (result.success && result.data) {
                 if (document.getElementById('totalCourses')) {
@@ -261,7 +261,12 @@ class UniversityApp {
                 }
             }
         } catch (error) {
-            console.error('Dashboard API error:', error);
+            console.warn('Dashboard API chưa có, dùng số mặc định');
+        
+            document.getElementById('totalCourses').textContent = 0;
+            document.getElementById('totalPrograms').textContent = 0;
+            document.getElementById('pendingPrograms').textContent = 0;
+            document.getElementById('approvedPrograms').textContent = 0;
         }
     }
 
