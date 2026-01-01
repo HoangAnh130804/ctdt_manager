@@ -1,5 +1,5 @@
-const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
-
+const DEMO_MODE = false;
+const API_BASE_URL = "https://ctdt-manager-backend.onrender.com";
 
 // Main App
 class UniversityApp {
@@ -147,7 +147,7 @@ class UniversityApp {
 
     // 👉 REAL API (sau này dùng)
     try {
-        const result = await this.makeRequest('/auth/login', {
+        const result = await this.makeRequest('Api/Auth/login', {
             method: 'POST',
             body: JSON.stringify({ username, password })
         });
