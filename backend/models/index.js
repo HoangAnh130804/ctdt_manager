@@ -1,5 +1,8 @@
 const sequelize = require('../config/database');
 
+const dashboardRoutes = require('./routes/dashboard');
+app.use('/api/dashboard', dashboardRoutes);
+
 // Import models
 const User = require('./User');
 const Course = require('./Course');
