@@ -1,6 +1,6 @@
 // App Configuration
 const DEMO_MODE = false;
-const API_BASE_URL = 'https://ctdt-api.onrender.com/api/';
+const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
 
 // Main App
 class UniversityApp {
