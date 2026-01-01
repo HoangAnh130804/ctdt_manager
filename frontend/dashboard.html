@@ -163,6 +163,7 @@
         // Global variables
         const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
         let currentUser = null;
+        let currentPage = 'dashboard';
         
         // Initialize
         $(document).ready(function() {
@@ -180,6 +181,7 @@
             }
             
             currentUser = JSON.parse(user);
+            updateUserInfo();
             showDashboard();
         }
         
@@ -187,30 +189,31 @@
         const token = localStorage.getItem('token');
             
             try {
-                const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+                const response = await fetch(API_BASE_URL + endpoint, {
                     ...options,
                     headers: {
                         'Content-Type': 'application/json',
-                        ...(token && { Authorization: `Bearer ${token}` })
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
                     }
                 });
                 
-                if (!res.ok) throw new Error('Server error');
-
-                return await res.json();
-            } catch (err) {
-                console.error(err);
-                showToast('Lỗi kết nối server', 'error');
+                if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = 'index.html';
+                    return null;
+                }
+    
+                return await response.json();
+            } catch (error) {
+                console.error('API ERROR:', error);
+                showToast('Lỗi kết nối server', 'danger');
                 return null;
             }
         }
-    }
         
         function updateUserInfo() {
             $('#userName').text(currentUser.full_name || currentUser.username);
-            $('#userRole').text(
-                currentUser.role === 'admin' ? 'Quản trị viên' : 
-                currentUser.role === 'manager' ? 'Quản lý' : 'Người dùng'
+            $('#userRole').text(currentUser.role);
             );
         }
         
@@ -232,7 +235,7 @@
         }
         
         // API Helper
-        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api'';
+        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
         
         async function apiRequest(endpoint, options = {}) {
             const url = `${API_BASE_URL}${endpoint}`;
@@ -267,15 +270,11 @@
         
         // Toast notification
         function showToast(message, type = 'info', title = 'Thông báo') {
-            const toast = $('#liveToast');
-            $('#toastTitle').text(title);
             $('#toastMessage').text(message);
-            
-            toast.removeClass('bg-success bg-danger bg-warning bg-info');
-            toast.addClass(`bg-${type}`);
-            
-            const bsToast = new bootstrap.Toast(toast[0]);
-            bsToast.show();
+            $('#liveToast')
+                .removeClass('bg-success bg-danger bg-warning bg-info')
+                .addClass('bg-' + type);
+            new bootstrap.Toast(document.getElementById('liveToast')).show();
         }
         
         // ==================== DASHBOARD ====================
@@ -389,28 +388,18 @@
         }
         
         async function loadDashboardData() {
-            try {
-                const [coursesRes, programsRes] = await Promise.all([
-                    apiRequest('/courses?limit=1'),
-                    apiRequest('/programs')
-                ]);
-                
-                if (coursesRes?.success) {
-                    $('#totalCoursesCount').text(coursesRes.pagination?.total || coursesRes.data?.length || 0);
-                }
-                
-                if (programsRes?.success) {
-                    const programs = programsRes.data || [];
-                    $('#totalProgramsCount').text(programsRes.pagination?.total || programs.length);
-                    
-                    const pending = programs.filter(p => p.status === 'pending').length;
-                    const approved = programs.filter(p => p.status === 'approved').length;
-                    
-                    $('#pendingProgramsCount').text(pending);
-                    $('#approvedProgramsCount').text(approved);
-                }
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
+            const courses = await apiRequest('/courses?limit=1');
+            const programs = await apiRequest('/programs');
+            
+            if (courses?.success) {
+                $('#totalCoursesCount').text(courses.pagination?.total || 0);
+            }
+            
+            if (programs?.success) {
+                const list = programs.data || [];
+                $('#totalProgramsCount').text(list.length);
+                $('#pendingProgramsCount').text(list.filter(p => p.status === 'pending').length);
+                $('#approvedProgramsCount').text(list.filter(p => p.status === 'approved').length);
             }
         }
         
@@ -3001,6 +2990,7 @@ $(document).ready(function() {
 </body>
 
 </html>
+
 
 
 
