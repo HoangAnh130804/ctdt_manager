@@ -213,7 +213,10 @@
         
         function updateUserInfo() {
             $('#userName').text(currentUser.full_name || currentUser.username);
-            $('#userRole').text(currentUser.role);
+            $('#userRole').text(
+                currentUser.role === 'admin' ? 'Quản trị viên' : 
+                currentUser.role === 'manager' ? 'Quản lý' : 'Người dùng'
+            );
         }
         
         function setupEventListeners() {
@@ -2464,3 +2467,4 @@
     </script>
 </body>
 </html>
+
