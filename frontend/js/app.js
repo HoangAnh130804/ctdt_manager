@@ -1,4 +1,4 @@
-const DEMO_MODE = true;
+const DEMO_MODE = false;
 const API_BASE_URL = "https://ctdt-manager-backend.onrender.com";
 
 // Main App
@@ -39,31 +39,27 @@ class UniversityApp {
         
         const headers = {
             'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...options.headers
         };
-
+        
         try {
-            const response = await fetch(url, {
-                ...options,
-                headers
-            });
-
+            const response = await fetch(url, { ...options, headers });
+            
             if (!response.ok) {
                 if (response.status === 401) {
-                    // Token expired or invalid
                     localStorage.clear();
                     this.showLogin();
                     throw new Error('Phiên đăng nhập đã hết hạn');
                 }
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`Lỗi server (${response.status})`);
             }
-
+            
             return await response.json();
-        } catch (error) {
-            console.error('API request error:', error);
-            this.showMessage(error.message || 'Lỗi kết nối server', 'error');
-            throw error;
+        } catch (err) {
+            console.error('API error:', err);
+            this.showMessage('Lỗi kết nối server', 'danger');
+            throw err;
         }
     }
 
@@ -243,22 +239,14 @@ class UniversityApp {
 
     async loadDashboardData() {
         try {
-            const result = await this.makeRequest('/dashboard');
+            const result = await this.makeRequest('/api/dashboard');
             console.log('Dashboard data:', result);
             
             if (result.success && result.data) {
-                if (document.getElementById('totalCourses')) {
-                    document.getElementById('totalCourses').textContent = result.data.courses ?? 0;
-                }
-                if (document.getElementById('totalPrograms')) {
-                    document.getElementById('totalPrograms').textContent = result.data.programs ?? 0;
-                }
-                if (document.getElementById('pendingPrograms')) {
-                    document.getElementById('pendingPrograms').textContent = result.data.programs ?? 0;
-                }
-                if (document.getElementById('approvedPrograms')) {
-                    document.getElementById('approvedPrograms').textContent = result.data.programs ?? 0;
-                }
+                document.getElementById('totalCourses').textContent = result.data.courses ?? 0;
+                document.getElementById('totalPrograms').textContent = result.data.programs ?? 0;
+                document.getElementById('pendingPrograms').textContent = result.data.programs ?? 0;
+                document.getElementById('approvedPrograms').textContent = result.data.programs ?? 0;
             }
         } catch (error) {
             console.warn('Dashboard API chưa có, dùng số mặc định');
@@ -304,7 +292,7 @@ class UniversityApp {
             `;
         } catch (error) {
             console.error('Error loading courses:', error);
-            this.showMessage('Không thể tải danh sách khóa học', 'error');
+            this.showMessage('Không thể tải danh sách khóa học', 'danger');
         }
     }
 
