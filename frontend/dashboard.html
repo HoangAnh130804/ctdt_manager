@@ -420,8 +420,9 @@
         
         // ==================== COURSE MANAGEMENT ====================
         async function loadCourses() {
-            currentPage = 'courses';
+            currentPage = '';
             updateActiveMenu();
+            ...
             
             $('#content').html(`
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -883,16 +884,15 @@
                     $('#coursesTable').DataTable().ajax.reload(null, false);
                 } else {
                     loadCourses();
+                }
+            } else {
+                showToast('Lỗi khi xóa khóa học', 'error');
             }
-        } else {
-            showToast('Lỗi khi xóa khóa học', 'error');
+        } catch (error) {
+            console.error('Delete course error:', error);
+            showToast('Lỗi kết nối server', 'error');
         }
-
-    } catch (error) {
-        console.error('Delete course error:', error);
-        showToast('Lỗi kết nối server', 'error');
     }
-}
 
         
         // ==================== SUBJECT MANAGEMENT ====================
@@ -2262,4 +2262,5 @@
     </script>
 </body>
 </html>
+
 
