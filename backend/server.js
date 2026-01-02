@@ -1,136 +1,108 @@
-/**
- * server.js – Production-ready
- * Backend: Express + Sequelize
- * Deploy: Render
- */
-
-require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const ExcelJS = require('exceljs');
+require('dotenv').config();
 
 const app = express();
 
-/* ================= ENV ================= */
-const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const BASE_URL =
-    process.env.BASE_URL || `http://localhost:${PORT}`;
-
-/* ================= MIDDLEWARE ================= */
-app.use(cors({
-    origin: NODE_ENV === 'production'
-        ? [
-            'https://hoanganh130804.github.io'
-        ]
-        : '*',
-    credentials: true
-}));
-
+// Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ================= DATABASE ================= */
-require('./models'); // sync sequelize
+// Import models to sync database
+require('./models');
 
-/* ================= ROUTES ================= */
+// Test route - kiểm tra server hoạt động
+app.get('/test', (req, res) => {
+    res.json({
+        message: 'Server is working!',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Import routes
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/course');
 const programRoutes = require('./routes/program');
 const subjectRoutes = require('./routes/subject');
 
+// Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/programs', programRoutes);
 app.use('/api/subjects', subjectRoutes);
 
-/* ================= HEALTH ================= */
+// Health check
 app.get('/api/health', (req, res) => {
     res.json({
         success: true,
-        status: 'ok',
-        env: NODE_ENV,
+        message: 'Server is running',
         timestamp: new Date().toISOString()
     });
 });
 
-/* ================= DEV ONLY ================= */
-if (NODE_ENV === 'development') {
+// Serve frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-    // Test route
-    app.get('/test', (req, res) => {
-        res.json({
-            message: 'Server is working!',
-            timestamp: new Date().toISOString()
-        });
-    });
-
-    // Serve frontend locally
-    app.use(express.static(path.join(__dirname, '../frontend')));
-    app.get('*', (req, res) => {
-        res.sendFile(
-            path.join(__dirname, '../frontend/index.html')
-        );
-    });
-}
-
-/* ================= TEST EXCEL ================= */
-app.get('/api/test/excel', async (req, res) => {
-    try {
-        const workbook = new ExcelJS.Workbook();
-        const sheet = workbook.addWorksheet('Test');
-
-        sheet.columns = [
-            { header: 'ID', key: 'id', width: 10 },
-            { header: 'Name', key: 'name', width: 30 }
-        ];
-
-        sheet.addRow({ id: 1, name: 'Test Program 1' });
-        sheet.addRow({ id: 2, name: 'Test Program 2' });
-
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=test.xlsx'
-        );
-
-        await workbook.xlsx.write(res);
-        res.end();
-    } catch (err) {
-        console.error('Excel error:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating Excel'
-        });
-    }
+// Handle all other routes by serving index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
-
-/* ================= ERROR HANDLER ================= */
+// Test Excel export
+app.get('/api/test/excel', (req, res) => {
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Test');
+    
+    worksheet.columns = [
+        { header: 'ID', key: 'id', width: 10 },
+        { header: 'Name', key: 'name', width: 30 }
+    ];
+    
+    worksheet.addRow({ id: 1, name: 'Test Program 1' });
+    worksheet.addRow({ id: 2, name: 'Test Program 2' });
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=test.xlsx');
+    
+    workbook.xlsx.write(res)
+        .then(() => {
+            res.end();
+            console.log('✅ Test Excel sent');
+        })
+        .catch(error => {
+            console.error('❌ Test Excel error:', error);
+            res.status(500).send('Error creating Excel');
+        });
+});
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Server error:', err);
-
-    res.status(err.status || 500).json({
+    res.status(500).json({
         success: false,
-        message: err.message || 'Internal server error',
-        ...(NODE_ENV === 'development' && { stack: err.stack })
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
 
-/* ================= START ================= */
+// Start server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`
-========================================
-🚀 UNIVERSITY MANAGEMENT SYSTEM
-========================================
-🌍 Environment: ${NODE_ENV}
-🌐 Base URL:    ${BASE_URL}
-📊 Health:      ${BASE_URL}/api/health
-========================================
+    ========================================
+    🚀 UNIVERSITY MANAGEMENT SYSTEM
+    ========================================
+    🌐 Frontend: http://localhost:${PORT}
+    🔧 API Test: http://localhost:${PORT}/test
+    📊 Health: http://localhost:${PORT}/api/health
+    
+    🔑 Test Accounts:
+       👨‍💼 Admin:     admin / admin123
+       👩‍💼 Manager:   manager / admin123  
+       👤 User:       user1 / admin123
+    ========================================
     `);
-    console.log('📦 ExcelJS version:', ExcelJS.version);
 });
+const ExcelJS = require('exceljs');
+console.log('ExcelJS version:', ExcelJS.version);
