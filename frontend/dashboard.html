@@ -215,13 +215,9 @@
                 // Check if unauthorized
                 if (response.status === 401) {
                     showToast('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', 'warning');
-                    setTimeout(() => {
-                        localStorage.clear();
-                        window.location.href = 'index.html';
-                    }, 2000);
-                    return null;
+                    return { unauthorized: true };
                 }
-                
+
                 // Try to parse JSON response
                 let data;
                 try {
@@ -684,67 +680,68 @@
                 </div>
             `);
             
-            $('#addCourseForm').submit(async function(e) {
-                e.preventDefault();
-                
-                const saveBtn = $('#saveCourseBtn');
-                const originalText = saveBtn.html();
-                saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Đang lưu...');
-                
-                try {
-                    const courseData = {
-                        code: $('#courseCode').val(),
-                        name: $('#courseName').val(),
-                        education_system: $('#courseEducationSystem').val(),
-                        admission_year: parseInt($('#courseAdmissionYear').val()),
-                        duration: parseInt($('#courseDuration').val()) || 4,
-                        total_credits: parseInt($('#courseCredits').val()) || 120,
-                        department: $('#courseDepartment').val(),
-                        description: $('#courseDescription').val()
-                    };
-                    
-                    const result = await apiRequest('/courses', {
-                        method: 'POST',
-                        body: courseData
-                    });
-                    
-                    if (result?.success) {
-                        showToast('Thêm ngành học thành công!', 'success');
-                        // Chuyển về trang danh sách sau 1.5 giây
-                        setTimeout(() => {
-                            loadCourses();
-                        }, 1500);
-                    } else {
-                        showToast(result?.message || 'Lỗi khi thêm ngành học', 'error');
-                    }
-                } catch (error) {
-                    console.error('Save course error:', error);
-                    showToast('Lỗi kết nối server', 'error');
-                } finally {
-                    saveBtn.prop('disabled', false).html(originalText);
-                }
+    $('#addCourseForm').submit(async function(e) {
+        e.preventDefault();
+        
+        const saveBtn = $('#saveCourseBtn');
+        const originalText = saveBtn.html();
+        saveBtn.prop('disabled', true)
+           .html('<i class="fas fa-spinner fa-spin me-2"></i>Đang lưu...');
+        
+        try {
+            const courseData = {
+                code: $('#courseCode').val(),
+                name: $('#courseName').val(),
+                education_system: $('#courseEducationSystem').val(),
+                admission_year: parseInt($('#courseAdmissionYear').val()),
+                duration: parseInt($('#courseDuration').val()) || 4,
+                total_credits: parseInt($('#courseCredits').val()) || 120,
+                department: $('#courseDepartment').val(),
+                description: $('#courseDescription').val()
+            };
+            
+            const result = await apiRequest('/courses', {
+                method: 'POST',
+                body: JSON.stringify(courseData)
             });
+            
+            if (result?.unauthorized) return;
+            
+            if (result) {
+                showToast('Thêm ngành học thành công!', 'success');
+                setTimeout(() => loadCourses(), 1500);
+            } else {
+                showToast('Lỗi khi thêm ngành học', 'error');
+            }
+        } catch (error) {
+            console.error('Save course error:', error);
+            showToast('Lỗi kết nối server', 'error');
+        } finally {
+            saveBtn.prop('disabled', false).html(originalText);
+        }
+    });
+    
+    async function showEditCourseForm(id) {
+        const result = await apiRequest(`/courses/${id}`);
+            
+        if (result?.unauthorized) return;
+        
+        if (!result) {
+            showToast('Không thể tải thông tin ngành học', 'error');
+            return;
         }
         
-        async function showEditCourseForm(id) {
-            const result = await apiRequest(`/courses/${id}`);
+        const course = result.data || result;
             
-            if (!result?.success) {
-                showToast('Không thể tải thông tin ngành học', 'error');
-                return;
-            }
-            
-            const course = result.data;
-            
-            const educationSystems = [
-                'Đại học',
-                'Cao đẳng', 
-                'Chất lượng cao',
-                'Liên thông',
-                'Vừa học vừa làm'
-            ];
-            
-            const currentYear = new Date().getFullYear();
+        const educationSystems = [
+            'Đại học',
+            'Cao đẳng', 
+            'Chất lượng cao',
+            'Liên thông',
+            'Vừa học vừa làm'
+        ];
+        
+        const currentYear = new Date().getFullYear();
             const admissionYears = [];
             for (let year = currentYear + 1; year >= 2000; year--) {
                 admissionYears.push(year);
@@ -824,77 +821,79 @@
                     </div>
                 </div>
             `);
-            
-            $('#editCourseForm').submit(async function(e) {
-                e.preventDefault();
-                
-                const updateBtn = $('#updateCourseBtn');
-                const originalText = updateBtn.html();
-                updateBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Đang cập nhật...');
-                
-                try {
-                    const courseData = {
-                        code: $('#editCourseCode').val(),
-                        name: $('#editCourseName').val(),
-                        education_system: $('#editCourseEducationSystem').val(),
-                        admission_year: parseInt($('#editCourseAdmissionYear').val()),
-                        duration: parseInt($('#editCourseDuration').val()) || 4,
-                        total_credits: parseInt($('#editCourseCredits').val()) || 120,
-                        department: $('#editCourseDepartment').val(),
-                        description: $('#editCourseDescription').val()
-                    };
-                    
-                    const result = await apiRequest(`/courses/${course.id}`, {
-                        method: 'PUT',
-                        body: courseData
-                    });
-                    
-                    if (result?.success) {
-                        showToast('Cập nhật ngành học thành công!', 'success');
-                        // Chuyển về trang danh sách sau 1.5 giây
-                        setTimeout(() => {
-                            loadCourses();
-                        }, 1500);
-                    } else {
-                        showToast(result?.message || 'Lỗi khi cập nhật ngành học', 'error');
-                    }
-                } catch (error) {
-                    console.error('Update course error:', error);
-                    showToast('Lỗi kết nối server', 'error');
-                } finally {
-                    updateBtn.prop('disabled', false).html(originalText);
-                }
-            });
-        }
         
-        async function deleteCourse(id) {
-            if (!confirm('Bạn có chắc muốn xóa khóa học này? Hành động này không thể hoàn tác.')) return;
+        $('#editCourseForm').submit(async function(e) {
+        e.preventDefault();
             
-            try {
-                const result = await apiRequest(`/courses/${id}`, {
-                    method: 'DELETE'
-                });
-                
-                if (result?.success) {
-                    showToast('Đã xóa khóa học thành công', 'success');
-                    // Reload danh sách
-                    if ($.fn.DataTable.isDataTable('#coursesTable')) {
-                        $('#coursesTable').DataTable().ajax.reload();
-                    }
-                    // Nếu đang ở trang chi tiết, chuyển về danh sách
-                    if (currentPage === 'courses') {
-                        // Chỉ reload table
-                    } else {
-                        loadCourses();
-                    }
-                } else {
-                    showToast(result?.message || 'Lỗi khi xóa khóa học', 'error');
-                }
-            } catch (error) {
-                console.error('Delete course error:', error);
-                showToast('Lỗi kết nối server', 'error');
+        const updateBtn = $('#updateCourseBtn');
+        const originalText = updateBtn.html();
+        updateBtn.prop('disabled', true)
+            .html('<i class="fas fa-spinner fa-spin me-2"></i>Đang cập nhật...');
+            
+        try {
+            const id = $('#courseId').val();
+            
+            const courseData = {
+                code: $('#editCourseCode').val(),
+                name: $('#editCourseName').val(),
+                education_system: $('#editCourseEducationSystem').val(),
+                admission_year: parseInt($('#editCourseAdmissionYear').val()),
+                duration: parseInt($('#editCourseDuration').val()) || 4,
+                total_credits: parseInt($('#editCourseCredits').val()) || 120,
+                department: $('#editCourseDepartment').val(),
+                description: $('#editCourseDescription').val()
+            };
+            
+            const result = await apiRequest(`/courses/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(courseData)
+            });
+            
+            if (result?.unauthorized) return;
+            
+            if (result) {
+                showToast('Cập nhật ngành học thành công!', 'success');
+                setTimeout(() => loadCourses(), 1500);
+            } else {
+                showToast('Lỗi khi cập nhật ngành học', 'error');
             }
+        
+        } catch (error) {
+            console.error('Update course error:', error);
+            showToast('Lỗi kết nối server', 'error');
+        } finally {
+            updateBtn.prop('disabled', false).html(originalText);
         }
+    });
+    
+    async function deleteCourse(id) {
+        if (!confirm('Bạn có chắc muốn xóa khóa học này? Hành động này không thể hoàn tác.')) return;
+        
+        try {
+            const result = await apiRequest(`/courses/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (result?.unauthorized) return;
+            
+            if (result) {
+                showToast('Đã xóa khóa học thành công', 'success');
+                
+                if ($.fn.DataTable.isDataTable('#coursesTable')) {
+                    $('#coursesTable').DataTable().ajax.reload(null, false);
+                } else {
+                    loadCourses();
+            }
+        } else {
+            showToast('Lỗi khi xóa khóa học', 'error');
+        }
+
+    } catch (error) {
+        console.error('Delete course error:', error);
+        showToast('Lỗi kết nối server', 'error');
+    }
+}
+
         
         // ==================== SUBJECT MANAGEMENT ====================
         async function loadSubjects() {
@@ -2263,3 +2262,4 @@
     </script>
 </body>
 </html>
+
