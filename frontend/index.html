@@ -64,26 +64,33 @@
     </div>
 
     <script>
+        if (localStorage.getItem('token')) {
+            window.location.href = '/ctdt_manager/frontend/dashboard.html';
+        }
+        
         const loginForm = document.getElementById('loginForm');
         const messageDiv = document.getElementById('message');
-
-    // Auto fill for testing (đặt ngoài submit)
+        
+        const loginForm = document.getElementById('loginForm');
+        const messageDiv = document.getElementById('message');
+        
         document.getElementById('username').value = 'admin';
         document.getElementById('password').value = 'admin123';
         
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
+            let user = null; 
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
-        // Loading
+
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng nhập...';
             submitBtn.disabled = true;
-            
+        
         // ===== DEMO LOGIN =====
             if (username === 'admin' && password === 'admin123') {
                  user = {
@@ -149,6 +156,7 @@
 </body>
 
 </html>
+
 
 
 
