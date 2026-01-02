@@ -64,101 +64,88 @@
     </div>
 
     <script>
-        if (localStorage.getItem('token')) {
-            window.location.href = '/ctdt_manager/frontend/dashboard.html';
-        }
-        
-        const loginForm = document.getElementById('loginForm');
-        const messageDiv = document.getElementById('message');
-        
-        const loginForm = document.getElementById('loginForm');
-        const messageDiv = document.getElementById('message');
-        
-        document.getElementById('username').value = 'admin';
-        document.getElementById('password').value = 'admin123';
-        
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+    // Nếu đã login thì vào dashboard
+    if (localStorage.getItem('token')) {
+        window.location.href = './dashboard.html';
+    }
 
-            let user = null; 
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
+    // Demo autofill
+    document.getElementById('username').value = 'admin';
+    document.getElementById('password').value = 'admin123';
 
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng nhập...';
-            submitBtn.disabled = true;
-        
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        let user = null;
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng nhập...';
+        submitBtn.disabled = true;
+
         // ===== DEMO LOGIN =====
-            if (username === 'admin' && password === 'admin123') {
-                 user = {
-                    username: 'admin',
-                    full_name: 'Nguyễn Văn Admin',
-                    role: 'admin',
-                    email: 'admin@university.edu.vn',
-                    department: 'Phòng ĐT',
-                    phone: '0231098123'
-                };
-            }
-                
-            else if (username === 'manager' && password === 'admin123') {
-                user = {
-                    username: 'manager',
-                    full_name: 'Trần Thị Quản Lý',
-                    role: 'manager',
-                    email: 'manager@university.edu.vn',
-                    department: 'Phòng ĐT',
-                    phone: '0923456789'
-                };
-            }
+        if (username === 'admin' && password === 'admin123') {
+            user = {
+                username: 'admin',
+                full_name: 'Nguyễn Văn Admin',
+                role: 'admin',
+                email: 'admin@university.edu.vn',
+                department: 'Phòng ĐT',
+                phone: '0912345678'
+            };
+        } else if (username === 'manager' && password === 'admin123') {
+            user = {
+                username: 'manager',
+                full_name: 'Trần Thị Quản Lý',
+                role: 'manager',
+                email: 'manager@university.edu.vn',
+                department: 'Khoa CNTT',
+                phone: '0923456789'
+            };
+        } else if (username === 'user1' && password === 'admin123') {
+            user = {
+                username: 'user',
+                full_name: 'Lê Văn Người Dùng',
+                role: 'user',
+                email: 'user@university.edu.vn',
+                department: 'Khoa Kinh tế',
+                phone: '0934567890'
+            };
+        }
 
-            else if (username === 'user1' && password === 'admin123') {
-                user = {
-                    username: 'user',
-                    full_name: 'Lê Văn Người Dùng',
-                    role: 'user',
-                    email: 'user@university.edu.vn',
-                    department: 'Phòng ĐT',
-                    phone: '0934567890'
-                };
-            }
-            if (user) {
-                localStorage.setItem('token', 'demo-token');
-                localStorage.setItem('user', JSON.stringify(user));
-                
-                messageDiv.innerHTML = `
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle me-2"></i>
-                        Đăng nhập demo thành công! Đang chuyển hướng...
-                    </div>
-                `;
-                
-                setTimeout(() => {
-                    window.location.href = '/ctdt_manager/frontend/dashboard.html';
-                }, 1000);
-            } else {
-                messageDiv.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        Sai tài khoản hoặc mật khẩu demo
-                    </div>
-                `;
-                
-            // Khôi phục nút khi login sai
+        if (user) {
+            localStorage.setItem('token', 'demo-token');
+            localStorage.setItem('user', JSON.stringify(user));
+
+            messageDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Đăng nhập thành công! Đang chuyển hướng...
+                </div>
+            `;
+
+            setTimeout(() => {
+                window.location.href = './dashboard.html';
+            }, 1000);
+        } else {
+            messageDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Sai tài khoản hoặc mật khẩu
+                </div>
+            `;
+
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
     });
 </script>
-
 </body>
-
 </html>
-
-
-
-
-
-
