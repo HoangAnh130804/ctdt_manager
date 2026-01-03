@@ -1017,7 +1017,7 @@ async function exportCoursesExcel() {
             return;
         }
         
-        const url = '${API_BASE_URL}/api/courses/export/excel';
+        const url = `${API_BASE_URL}/api/courses/export/excel`;
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
         
@@ -1408,7 +1408,7 @@ function initializeSubjectsTable() {
         processing: true,
         serverSide: false,
         ajax: {
-            url: '${API_BASE_URL}/subjects',
+            url: `${API_BASE_URL}/subjects`,
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -1868,7 +1868,7 @@ function searchSubjects() {
     const subjectType = $('#filterSubjectType').val();
     const courseId = $('#filterSubjectCourse').val();
     
-    let url = '${API_BASE_URL}/subjects';
+    let url = `${API_BASE_URL}/subjects`;
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -1893,7 +1893,7 @@ function resetSubjectSearch() {
     
     if ($.fn.DataTable.isDataTable('#subjectsTable')) {
         const table = $('#subjectsTable').DataTable();
-        table.ajax.url('${API_BASE_URL}/subjects').load();
+        table.ajax.url(`${API_BASE_URL}/subjects`).load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -1965,7 +1965,7 @@ function resetCourseSearch() {
     
     if ($.fn.DataTable.isDataTable('#coursesTable')) {
         const table = $('#coursesTable').DataTable();
-        table.ajax.url('${API_BASE_URL}/courses').load();
+        table.ajax.url(`${API_BASE_URL}/courses`).load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -1978,7 +1978,7 @@ function searchPrograms() {
     const status = $('#filterProgramStatus').val();
     const courseId = $('#filterProgramCourse').val();
     
-    let url = '${API_BASE_URL}/programs';
+    let url = `${API_BASE_URL}/programs`;
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2136,7 +2136,7 @@ $(document).ready(function() {
                 processing: true,
                 serverSide: false,
                 ajax: {
-                    url: '${API_BASE_URL}/programs',
+                    url: `${API_BASE_URL}/programs`,
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
@@ -2749,7 +2749,7 @@ async function showEditProgramForm(id) {
         document.title = 'Đang xuất Excel...';
         
         // Tạo URL đầy đủ
-        const url = '${API_BASE_URL}/programs/export/excel';
+        const url = `${API_BASE_URL}/programs/export/excel`;
         const token = localStorage.getItem('token');
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
@@ -2840,7 +2840,7 @@ function searchCourses() {
     const searchText = $('#searchCourse').val();
     const educationSystem = $('#filterCourseEducationSystem').val();
     
-    let url = '${API_BASE_URL}/courses';
+    let url = `${API_BASE_URL}/courses`;
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2864,7 +2864,7 @@ function resetCourseSearch() {
     
     if ($.fn.DataTable.isDataTable('#coursesTable')) {
         const table = $('#coursesTable').DataTable();
-        table.ajax.url('${API_BASE_URL}/courses').load();
+        table.ajax.url(`${API_BASE_URL}/courses`).load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -2875,7 +2875,7 @@ function searchPrograms() {
     const status = $('#filterProgramStatus').val();
     const courseId = $('#filterProgramCourse').val();
     
-    let url = '${API_BASE_URL}/programs';
+    let url = `${API_BASE_URL}/programs`;
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2980,6 +2980,7 @@ $(document).ready(function() {
     </script>
 </body>
 </html>
+
 
 
 
