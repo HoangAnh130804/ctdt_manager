@@ -160,6 +160,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     
     <script>
+        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
+        
         // Global variables
         let currentUser = null;
         let currentPage = 'dashboard';
@@ -481,7 +483,7 @@
         processing: true,
         serverSide: false,
         ajax: {
-            url: 'http://localhost:5000/api/courses',
+            url: `${API_BASE_URL}/courses`,
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -1406,7 +1408,7 @@ function initializeSubjectsTable() {
         processing: true,
         serverSide: false,
         ajax: {
-            url: 'http://localhost:5000/api/subjects',
+            url: '${API_BASE_URL}/subjects',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -2134,7 +2136,7 @@ $(document).ready(function() {
                 processing: true,
                 serverSide: false,
                 ajax: {
-                    url: 'http://localhost:5000/api/programs',
+                    url: '${API_BASE_URL}/programs',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
@@ -2978,3 +2980,4 @@ $(document).ready(function() {
     </script>
 </body>
 </html>
+
