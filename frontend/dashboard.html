@@ -175,7 +175,7 @@
             const userData = localStorage.getItem('user');
             
             if (!token || !userData) {
-                window.location.href = "index.html";
+                window.location.href = "https://hoanganh130804.github.io/ctdt_manager/frontend/index.html";
                 return;
             }
             
@@ -226,7 +226,7 @@
                 if (response.status === 401) {
                     // Token expired
                     localStorage.clear();
-                    window.location.href = "index.html";
+                    window.location.href = "https://hoanganh130804.github.io/ctdt_manager/frontend/index.html";
                     return null;
                 }
                 
@@ -2978,4 +2978,5 @@ $(document).ready(function() {
     </script>
 </body>
 </html>
+
 
