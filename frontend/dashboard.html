@@ -160,8 +160,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     
     <script>
-        const API_BASE_URL = 'https://ctdt-manager-backend.onrender.com/api';
-        
         // Global variables
         let currentUser = null;
         let currentPage = 'dashboard';
@@ -177,7 +175,7 @@
             const userData = localStorage.getItem('user');
             
             if (!token || !userData) {
-                window.location.href = '../index.html';
+                window.location.href = '/';
                 return;
             }
             
@@ -213,7 +211,7 @@
         
         // API Helper
         async function apiRequest(endpoint, options = {}) {
-            const url = `${API_BASE_URL}${endpoint}`;
+            const url = `http://localhost:5000/api${endpoint}`;
             const token = localStorage.getItem('token');
             
             const headers = {
@@ -228,7 +226,7 @@
                 if (response.status === 401) {
                     // Token expired
                     localStorage.clear();
-                    window.location.href = 'index.hmtl';
+                    window.location.href = '/';
                     return null;
                 }
                 
@@ -483,7 +481,7 @@
         processing: true,
         serverSide: false,
         ajax: {
-            url: `${API_BASE_URL}/courses`,
+            url: 'http://localhost:5000/api/courses',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -1017,7 +1015,7 @@ async function exportCoursesExcel() {
             return;
         }
         
-        const url = `${API_BASE_URL}/api/courses/export/excel`;
+        const url = 'http://localhost:5000/api/courses/export/excel';
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
         
@@ -1140,7 +1138,7 @@ async function exportCourseSubjectsExcel(courseId) {
         console.log('🔵 [FRONTEND] Exporting subjects for course:', courseId);
         
         const token = localStorage.getItem('token');
-        const url = `${API_BASE_URL}/subjects/course/${courseId}/export/excel`;
+        const url = `http://localhost:5000/api/subjects/course/${courseId}/export/excel`;
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
         
@@ -1408,7 +1406,7 @@ function initializeSubjectsTable() {
         processing: true,
         serverSide: false,
         ajax: {
-            url: `${API_BASE_URL}/subjects`,
+            url: 'http://localhost:5000/api/subjects',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
@@ -1868,7 +1866,7 @@ function searchSubjects() {
     const subjectType = $('#filterSubjectType').val();
     const courseId = $('#filterSubjectCourse').val();
     
-    let url = `${API_BASE_URL}/subjects`;
+    let url = 'http://localhost:5000/api/subjects';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -1893,7 +1891,7 @@ function resetSubjectSearch() {
     
     if ($.fn.DataTable.isDataTable('#subjectsTable')) {
         const table = $('#subjectsTable').DataTable();
-        table.ajax.url(`${API_BASE_URL}/subjects`).load();
+        table.ajax.url('http://localhost:5000/api/subjects').load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -1901,7 +1899,7 @@ function resetSubjectSearch() {
 
 async function exportSubjectsExcel() {
     try {
-        const response = await fetch('${API_BASE_URL}/subjects/export/excel', {
+        const response = await fetch('http://localhost:5000/api/subjects/export/excel', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -1942,7 +1940,7 @@ function searchCourses() {
     const searchText = $('#searchCourse').val();
     const educationSystem = $('#filterCourseEducationSystem').val();
     
-    let url = '${API_BASE_URL}/courses';
+    let url = 'http://localhost:5000/api/courses';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -1965,7 +1963,7 @@ function resetCourseSearch() {
     
     if ($.fn.DataTable.isDataTable('#coursesTable')) {
         const table = $('#coursesTable').DataTable();
-        table.ajax.url(`${API_BASE_URL}/courses`).load();
+        table.ajax.url('http://localhost:5000/api/courses').load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -1978,7 +1976,7 @@ function searchPrograms() {
     const status = $('#filterProgramStatus').val();
     const courseId = $('#filterProgramCourse').val();
     
-    let url = `${API_BASE_URL}/programs`;
+    let url = 'http://localhost:5000/api/programs';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2136,7 +2134,7 @@ $(document).ready(function() {
                 processing: true,
                 serverSide: false,
                 ajax: {
-                    url: `${API_BASE_URL}/programs`,
+                    url: 'http://localhost:5000/api/programs',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
@@ -2749,7 +2747,7 @@ async function showEditProgramForm(id) {
         document.title = 'Đang xuất Excel...';
         
         // Tạo URL đầy đủ
-        const url = `${API_BASE_URL}/programs/export/excel`;
+        const url = 'http://localhost:5000/api/programs/export/excel';
         const token = localStorage.getItem('token');
         
         console.log('🔵 [FRONTEND] Fetching from:', url);
@@ -2820,7 +2818,7 @@ function fallbackExportProgramsExcel() {
     console.log('🔄 [FRONTEND] Trying fallback export...');
     
     const token = localStorage.getItem('token');
-    const url = `${API_BASE_URL}/programs/export/excel?token=${encodeURIComponent(token)}`;
+    const url = `http://localhost:5000/api/programs/export/excel?token=${encodeURIComponent(token)}`;
     
     // Mở trong tab mới
     const newWindow = window.open(url, '_blank');
@@ -2840,7 +2838,7 @@ function searchCourses() {
     const searchText = $('#searchCourse').val();
     const educationSystem = $('#filterCourseEducationSystem').val();
     
-    let url = `${API_BASE_URL}/courses`;
+    let url = 'http://localhost:5000/api/courses';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2864,7 +2862,7 @@ function resetCourseSearch() {
     
     if ($.fn.DataTable.isDataTable('#coursesTable')) {
         const table = $('#coursesTable').DataTable();
-        table.ajax.url(`${API_BASE_URL}/courses`).load();
+        table.ajax.url('http://localhost:5000/api/courses').load();
     }
     
     showToast('Đã đặt lại tìm kiếm', 'info');
@@ -2875,7 +2873,7 @@ function searchPrograms() {
     const status = $('#filterProgramStatus').val();
     const courseId = $('#filterProgramCourse').val();
     
-    let url = `${API_BASE_URL}/programs`;
+    let url = 'http://localhost:5000/api/programs';
     const params = [];
     
     if (searchText) params.push(`search=${encodeURIComponent(searchText)}`);
@@ -2974,15 +2972,9 @@ $(document).ready(function() {
         function logout() {
             if (confirm('Bạn có chắc muốn đăng xuất?')) {
                 localStorage.clear();
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
